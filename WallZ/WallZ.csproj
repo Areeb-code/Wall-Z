@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AssemblyName>WALL Z</AssemblyName>
+    <RootNamespace>WallZ</RootNamespace>
+    <Product>WALL Z</Product>
+    <Title>WALL Z</Title>
+    <AssemblyTitle>WALL Z</AssemblyTitle>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\WALL Z.ico</ApplicationIcon>
+    <IncludeWallpaperAssets Condition="'$(IncludeWallpaperAssets)' == ''">true</IncludeWallpaperAssets>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="obj\**\*.cs" />
+    <Content Include="Assets\WALL Z.ico" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\WallZ.ico" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\wallpapers\**\*.*"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest"
+          Link="wallpapers\%(RecursiveDir)%(Filename)%(Extension)"
+          Condition="'$(IncludeWallpaperAssets)' == 'true'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibVLCSharp.WinForms" Version="3.9.7.1" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
+  </ItemGroup>
+
+
+</Project>

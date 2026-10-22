@@ -1,0 +1,401 @@
+<Window x:Class="WallZ.UI.OnboardingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="WALL Z"
+        Height="540" Width="700"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize">
+
+    <Border Background="#08090B" CornerRadius="16"
+            BorderBrush="#22FFFFFF" BorderThickness="1"
+            ClipToBounds="True">
+
+        <!-- ================================================================ -->
+        <!-- STEP 1 — SPLASH                                                   -->
+        <!-- ================================================================ -->
+        <Grid>
+            <Grid x:Name="Step1" Visibility="Visible">
+
+                <!-- Ambient radial glow -->
+                <Canvas IsHitTestVisible="False" ClipToBounds="True">
+                    <Ellipse Width="700" Height="460" Opacity="0.09" Canvas.Left="-50" Canvas.Top="30">
+                        <Ellipse.Fill>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#C9993A" Offset="0"/>
+                                <GradientStop Color="Transparent" Offset="1"/>
+                            </RadialGradientBrush>
+                        </Ellipse.Fill>
+                        <Ellipse.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         From="0.07" To="0.16"
+                                                         Duration="0:0:3.5"
+                                                         EasingFunction="{x:Null}"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Ellipse.Triggers>
+                    </Ellipse>
+                </Canvas>
+
+                <!-- Center content -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0">
+                    <StackPanel.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     From="0" To="1" Duration="0:0:1.2"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </StackPanel.Triggers>
+
+                    <!-- Spark icon -->
+                    <TextBlock Text="✦" FontSize="34" Foreground="#C9993A"
+                               HorizontalAlignment="Center" Margin="0,0,0,26"/>
+
+                    <!-- WALL Z brand -->
+                    <TextBlock HorizontalAlignment="Center" FontSize="44" Margin="0,0,0,14">
+                        <Run Text="WALL " FontFamily="Palatino Linotype" FontWeight="Bold" Foreground="#F8F9FA"/>
+                        <Run Text="Z"     FontFamily="Palatino Linotype" FontWeight="Bold"
+                             FontStyle="Italic" Foreground="#C9993A"/>
+                    </TextBlock>
+
+                    <!-- Tagline -->
+                    <TextBlock Text="Your desktop, elevated."
+                               HorizontalAlignment="Center"
+                               FontFamily="Palatino Linotype" FontStyle="Italic"
+                               FontSize="17" Foreground="#6A6E7A" Margin="0,0,0,58"/>
+
+                    <!-- Continue button (fades in after 1.2s) -->
+                    <Button x:Name="Step1ContinueBtn"
+                            HorizontalAlignment="Center"
+                            Padding="32,12" FontSize="13" FontWeight="SemiBold"
+                            Foreground="#0C0D0F" Cursor="Hand"
+                            Click="Step1Continue_Click" Opacity="0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Border x:Name="Glow" CornerRadius="12" Margin="0,3,0,-3" Opacity="0.5">
+                                        <Border.Background><SolidColorBrush Color="#7A5B1A"/></Border.Background>
+                                        <Border.Effect><BlurEffect Radius="14"/></Border.Effect>
+                                    </Border>
+                                    <Border x:Name="Btn" CornerRadius="10" Background="#C9993A"
+                                            Padding="{TemplateBinding Padding}">
+                                        <Grid>
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border CornerRadius="10,10,0,0" Height="11" VerticalAlignment="Top" IsHitTestVisible="False">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Color="#24FFFFFF" Offset="0"/>
+                                                        <GradientStop Color="#00FFFFFF" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
+                                        <Setter TargetName="Btn"  Property="Background" Value="#E8B84B"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="Btn"  Property="Background" Value="#9A6818"/>
+                                        <Setter TargetName="Glow" Property="Opacity" Value="0.2"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <TextBlock Text="Continue  →" FontFamily="Segoe UI Variable Display" FontSize="13" FontWeight="SemiBold" Foreground="#0C0D0F"/>
+                        <Button.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard BeginTime="0:0:1.5">
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.6"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </StackPanel>
+
+                <!-- Step dots -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom" Margin="0,0,0,28">
+                    <Ellipse Width="7" Height="7" Fill="#C9993A" Margin="4,0"/>
+                    <Ellipse Width="7" Height="7" Fill="#28FFFFFF" Margin="4,0"/>
+                    <Ellipse Width="7" Height="7" Fill="#28FFFFFF" Margin="4,0"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- ============================================================ -->
+            <!-- STEP 2 — STYLE SELECTION                                     -->
+            <!-- ============================================================ -->
+            <Grid x:Name="Step2" Visibility="Collapsed">
+                <StackPanel Margin="48,38,48,0">
+                    <TextBlock Text="Choose your aesthetic" FontSize="25" FontWeight="Bold"
+                               Foreground="#F8F9FA" Margin="0,0,0,5"
+                               FontFamily="Segoe UI Variable Display"/>
+                    <TextBlock Text="What kind of wallpapers move you? Pick one or many."
+                               FontSize="13.5" Foreground="#7A7E8A" Margin="0,0,0,28"/>
+
+                    <!-- 2×3 Bento card grid -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="14"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="14"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="12"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Cinematic -->
+                        <Border x:Name="CinematicCard" Grid.Column="0" Grid.Row="0"
+                                Height="108" CornerRadius="12" ClipToBounds="True"
+                                Cursor="Hand" Tag="Cinematic"
+                                BorderThickness="1.5" BorderBrush="#18FFFFFF"
+                                MouseLeftButtonDown="StyleCard_Click">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#18243A" Offset="0"/>
+                                    <GradientStop Color="#0A0E1A" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="🎬" FontSize="28" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Cinematic" FontSize="12.5" FontWeight="SemiBold"
+                                           Foreground="#D0D4DF" HorizontalAlignment="Center" Margin="0,7,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Minimal -->
+                        <Border x:Name="MinimalCard" Grid.Column="2" Grid.Row="0"
+                                Height="108" CornerRadius="12" ClipToBounds="True"
+                                Cursor="Hand" Tag="Minimal"
+                                BorderThickness="1.5" BorderBrush="#18FFFFFF"
+                                MouseLeftButtonDown="StyleCard_Click">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#1C1C1E" Offset="0"/>
+                                    <GradientStop Color="#0A0A0A" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="✨" FontSize="28" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Minimal" FontSize="12.5" FontWeight="SemiBold"
+                                           Foreground="#D0D4DF" HorizontalAlignment="Center" Margin="0,7,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Nature -->
+                        <Border x:Name="NatureCard" Grid.Column="4" Grid.Row="0"
+                                Height="108" CornerRadius="12" ClipToBounds="True"
+                                Cursor="Hand" Tag="Nature"
+                                BorderThickness="1.5" BorderBrush="#18FFFFFF"
+                                MouseLeftButtonDown="StyleCard_Click">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#0D2010" Offset="0"/>
+                                    <GradientStop Color="#040B06" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="🌿" FontSize="28" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Nature" FontSize="12.5" FontWeight="SemiBold"
+                                           Foreground="#D0D4DF" HorizontalAlignment="Center" Margin="0,7,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Anime -->
+                        <Border x:Name="AnimeCard" Grid.Column="0" Grid.Row="2"
+                                Height="108" CornerRadius="12" ClipToBounds="True"
+                                Cursor="Hand" Tag="Anime"
+                                BorderThickness="1.5" BorderBrush="#18FFFFFF"
+                                MouseLeftButtonDown="StyleCard_Click">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#28091E" Offset="0"/>
+                                    <GradientStop Color="#12040E" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="🌸" FontSize="28" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Anime" FontSize="12.5" FontWeight="SemiBold"
+                                           Foreground="#D0D4DF" HorizontalAlignment="Center" Margin="0,7,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Abstract -->
+                        <Border x:Name="AbstractCard" Grid.Column="2" Grid.Row="2"
+                                Height="108" CornerRadius="12" ClipToBounds="True"
+                                Cursor="Hand" Tag="Abstract"
+                                BorderThickness="1.5" BorderBrush="#18FFFFFF"
+                                MouseLeftButtonDown="StyleCard_Click">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#091828" Offset="0"/>
+                                    <GradientStop Color="#040A14" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="🌀" FontSize="28" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Abstract" FontSize="12.5" FontWeight="SemiBold"
+                                           Foreground="#D0D4DF" HorizontalAlignment="Center" Margin="0,7,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Everything -->
+                        <Border x:Name="EverythingCard" Grid.Column="4" Grid.Row="2"
+                                Height="108" CornerRadius="12" ClipToBounds="True"
+                                Cursor="Hand" Tag="Everything"
+                                BorderThickness="1.5" BorderBrush="#18FFFFFF"
+                                MouseLeftButtonDown="StyleCard_Click">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#261800" Offset="0"/>
+                                    <GradientStop Color="#120C00" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="⚡" FontSize="28" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Everything" FontSize="12.5" FontWeight="SemiBold"
+                                           Foreground="#D0D4DF" HorizontalAlignment="Center" Margin="0,7,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+
+                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                        Margin="0,0,48,42" Padding="26,11" Cursor="Hand"
+                        Click="Step2Continue_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Border x:Name="Glow" CornerRadius="12" Margin="0,3,0,-3" Opacity="0.5">
+                                    <Border.Background><SolidColorBrush Color="#7A5B1A"/></Border.Background>
+                                    <Border.Effect><BlurEffect Radius="14"/></Border.Effect>
+                                </Border>
+                                <Border x:Name="Btn" CornerRadius="10" Background="#C9993A" Padding="{TemplateBinding Padding}">
+                                    <Grid>
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border CornerRadius="10,10,0,0" Height="11" VerticalAlignment="Top" IsHitTestVisible="False">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                    <GradientStop Color="#24FFFFFF" Offset="0"/>
+                                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
+                                    <Setter TargetName="Btn" Property="Background" Value="#E8B84B"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <TextBlock Text="Continue  →" FontFamily="Segoe UI Variable Display" FontSize="13" FontWeight="SemiBold" Foreground="#0C0D0F"/>
+                </Button>
+
+                <!-- Step dots -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom" Margin="0,0,0,28">
+                    <Ellipse Width="7" Height="7" Fill="#28FFFFFF" Margin="4,0"/>
+                    <Ellipse Width="7" Height="7" Fill="#C9993A" Margin="4,0"/>
+                    <Ellipse Width="7" Height="7" Fill="#28FFFFFF" Margin="4,0"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- ============================================================ -->
+            <!-- STEP 3 — YOUR CANVAS                                         -->
+            <!-- ============================================================ -->
+            <Grid x:Name="Step3" Visibility="Collapsed">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0">
+                    <StackPanel.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     From="0" To="1" Duration="0:0:0.5"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </StackPanel.Triggers>
+
+                    <TextBlock Text="◫" FontSize="38" Foreground="#C9993A"
+                               HorizontalAlignment="Center" Margin="0,0,0,22"/>
+                    <TextBlock Text="Your Canvas" FontSize="26" FontWeight="Bold"
+                               Foreground="#F8F9FA" HorizontalAlignment="Center"
+                               FontFamily="Segoe UI Variable Display" Margin="0,0,0,8"/>
+                    <TextBlock x:Name="DisplaySubtitle" Text="We detected your display setup"
+                               FontSize="13.5" Foreground="#6A6E7A"
+                               HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                    <TextBlock x:Name="ResolutionLabel" Text="1920 × 1080"
+                               FontSize="34" FontWeight="Bold"
+                               FontFamily="Palatino Linotype" Foreground="#F8F9FA"
+                               HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="ResolutionTier" Text="Full HD"
+                               FontSize="13" Foreground="#5A5E6A"
+                               HorizontalAlignment="Center" Margin="0,0,0,52"/>
+
+                    <Button HorizontalAlignment="Center" Padding="32,12" Cursor="Hand"
+                            Click="Step3Finish_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Border x:Name="Glow" CornerRadius="12" Margin="0,3,0,-3" Opacity="0.5">
+                                        <Border.Background><SolidColorBrush Color="#7A5B1A"/></Border.Background>
+                                        <Border.Effect><BlurEffect Radius="14"/></Border.Effect>
+                                    </Border>
+                                    <Border x:Name="Btn" CornerRadius="10" Background="#C9993A" Padding="{TemplateBinding Padding}">
+                                        <Grid>
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border CornerRadius="10,10,0,0" Height="11" VerticalAlignment="Top" IsHitTestVisible="False">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Color="#24FFFFFF" Offset="0"/>
+                                                        <GradientStop Color="#00FFFFFF" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
+                                        <Setter TargetName="Btn" Property="Background" Value="#E8B84B"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <TextBlock Text="Start Exploring  →" FontFamily="Segoe UI Variable Display" FontSize="13" FontWeight="SemiBold" Foreground="#0C0D0F"/>
+                    </Button>
+                </StackPanel>
+
+                <!-- Step dots -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom" Margin="0,0,0,28">
+                    <Ellipse Width="7" Height="7" Fill="#28FFFFFF" Margin="4,0"/>
+                    <Ellipse Width="7" Height="7" Fill="#28FFFFFF" Margin="4,0"/>
+                    <Ellipse Width="7" Height="7" Fill="#C9993A" Margin="4,0"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

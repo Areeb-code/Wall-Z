@@ -1,0 +1,979 @@
+<Window x:Class="WallZ.UI.DashboardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WallZ.UI"
+        mc:Ignorable="d"
+        Title="WALL Z"
+        Height="660" Width="1120"
+        MinHeight="500" MinWidth="840"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        FontFamily="{StaticResource DefaultFontFamily}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <!-- Outer Window Chrome with Hairline Border and Rounded Edges -->
+    <Border Background="{StaticResource CanvasBaseBrush}"
+            BorderBrush="{StaticResource HairlineBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="14"
+            ClipToBounds="True">
+
+        <Grid>
+            <!-- Dynamic Ambient Back-Glow (Reactive to active wallpaper) -->
+            <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
+                <Ellipse x:Name="AmbientGlowOrb"
+                         Width="800" Height="500"
+                         Canvas.Top="-150" Canvas.Right="-150"
+                         Opacity="0.07">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                            <GradientStop x:Name="AmbientColorStop" Color="#00E5FF" Offset="0" />
+                            <GradientStop Color="Transparent" Offset="1" />
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+            </Canvas>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" /> <!-- Custom Title Bar -->
+                    <RowDefinition Height="*" />  <!-- Main Workspace -->
+                </Grid.RowDefinitions>
+
+                <!-- ========================================================= -->
+                <!-- 1. CUSTOM INTEGRATED TITLE BAR                            -->
+                <!-- ========================================================= -->
+                <Grid Grid.Row="0" Background="{StaticResource SurfaceLevel1Brush}" MouseLeftButtonDown="TitleBar_MouseDown">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="210" /> <!-- App Brand -->
+                        <ColumnDefinition Width="*" />   <!-- Search & Telemetry -->
+                        <ColumnDefinition Width="Auto" /><!-- Window Controls -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- App Brand & Glowing Logo -->
+                    <!-- WALL Z luxury brand mark -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="18,0,0,0">
+                        <TextBlock Text="✦" Foreground="{StaticResource AccentGoldBrightBrush}" FontSize="15"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock VerticalAlignment="Center">
+                            <Run Text="WALL " FontFamily="{StaticResource LuxuryFontFamily}" FontWeight="Bold" FontSize="16.5"
+                                 Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <Run Text="Z" FontFamily="{StaticResource LuxuryFontFamily}" FontWeight="Bold"
+                                 FontStyle="Italic" FontSize="18.5" Foreground="{StaticResource AccentGoldBrightBrush}"/>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!-- Search Input & Live Engine Badge -->
+                    <Grid Grid.Column="1" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Search Bar -->
+                        <Border Grid.Column="0" Background="{StaticResource SurfaceLevel2Brush}"
+                                BorderBrush="{StaticResource HairlineBorderBrush}"
+                                BorderThickness="1" CornerRadius="8"
+                                MinWidth="180" MaxWidth="300" Height="32" Margin="10,0,10,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="32" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="🔍" FontSize="11" Foreground="{StaticResource TextMutedBrush}"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBox x:Name="SearchBox" Grid.Column="1"
+                                         Background="Transparent" BorderThickness="0"
+                                         Foreground="{StaticResource TextPrimaryBrush}"
+                                         CaretBrush="{StaticResource TextPrimaryBrush}"
+                                         VerticalAlignment="Center" FontSize="12.5"
+                                         TextChanged="SearchBox_TextChanged" />
+                                <TextBlock x:Name="SearchPlaceholder" Grid.Column="1"
+                                           Text="Search wallpapers, tags, styles..."
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           VerticalAlignment="Center" FontSize="12.5"
+                                           IsHitTestVisible="False" Margin="2,0,0,0" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Live Engine Status Badge -->
+                        <Border Grid.Column="2" Background="{StaticResource SurfaceLevel2Brush}"
+                                BorderBrush="{StaticResource HairlineBorderBrush}"
+                                BorderThickness="1" CornerRadius="999"
+                                Padding="12,4" Margin="0,0,16,0" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse x:Name="EngineStatusDot" Width="7" Height="7" Fill="{StaticResource AccentEmeraldBrush}" Margin="0,0,7,0" />
+                                <TextBlock x:Name="HeaderEngineBadgeText" Text="Active · 60 FPS · 82 MB" FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Window Min / Max / Close Controls -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource ChromeButton}" Click="Minimize_Click">
+                            <TextBlock Text="─" FontSize="10" />
+                        </Button>
+                        <Button Style="{StaticResource ChromeButton}" Click="Maximize_Click">
+                            <TextBlock x:Name="MaximizeIcon" Text="□" FontSize="12" />
+                        </Button>
+                        <Button Style="{StaticResource ChromeCloseButton}" Click="Close_Click">
+                            <TextBlock Text="✕" FontSize="11" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <!-- ========================================================= -->
+                <!-- 2. MAIN APPLICATION WORKSPACE                             -->
+                <!-- ========================================================= -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="210" /> <!-- Left Navigation Sidebar -->
+                        <ColumnDefinition Width="*" />   <!-- Dynamic Content Stage -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left Navigation Sidebar -->
+                    <Border Grid.Column="0" Background="{StaticResource SurfaceLevel1Brush}"
+                            BorderBrush="{StaticResource HairlineBorderBrush}"
+                            BorderThickness="0,1,1,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" /> <!-- Navigation Links -->
+                                <RowDefinition Height="*" />    <!-- Spacer -->
+                                <RowDefinition Height="Auto" /> <!-- Active Mini Player Card -->
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Margin="0,14,0,0">
+                                <RadioButton Content="✦  Explore" Style="{StaticResource NavRadioButton}"
+                                             IsChecked="True" Checked="Nav_Checked" Tag="Explore" />
+                                <RadioButton Content="▣  Library" Style="{StaticResource NavRadioButton}"
+                                             Checked="Nav_Checked" Tag="Library" />
+                                <RadioButton Content="♡  Favorites" Style="{StaticResource NavRadioButton}"
+                                             Checked="Nav_Checked" Tag="Favorites" />
+                                <RadioButton Content="▦  Atmospheres" Style="{StaticResource NavRadioButton}"
+                                             Checked="Nav_Checked" Tag="Atmospheres" />
+                                <RadioButton Content="◫  Displays" Style="{StaticResource NavRadioButton}"
+                                             Checked="Nav_Checked" Tag="Displays" />
+                                <RadioButton Content="⚡  Engine Shield" Style="{StaticResource NavRadioButton}"
+                                             Checked="Nav_Checked" Tag="Performance" />
+
+                                <Border Height="1" Background="{StaticResource HairlineBorderBrush}" Margin="18,12" />
+
+                                <RadioButton Content="⚙  Settings" Style="{StaticResource NavRadioButton}"
+                                             Checked="Nav_Checked" Tag="Settings" />
+                            </StackPanel>
+
+                            <!-- Bottom Mini Player Pill showing Current Wallpaper -->
+                            <Border Grid.Row="2" Background="{StaticResource SurfaceLevel2Brush}"
+                                    BorderBrush="{StaticResource HairlineBorderBrush}"
+                                    BorderThickness="1" CornerRadius="10"
+                                    Margin="14,0,14,14" Padding="10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Mini Poster Preview -->
+                                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="6" ClipToBounds="True">
+                                        <Image x:Name="MiniActiveThumbnail" Stretch="UniformToFill" />
+                                    </Border>
+
+                                    <!-- Title & Status -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,4,0">
+                                        <TextBlock x:Name="MiniActiveTitle" Text="Aurora Live"
+                                                   FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="Desktop Active" FontSize="10.5"
+                                                   Foreground="{StaticResource AccentCyanBrush}" />
+                                    </StackPanel>
+
+                                    <!-- Play/Pause Toggle -->
+                                    <Button Grid.Column="2" Width="28" Height="28"
+                                            Style="{StaticResource SecondaryPillButton}"
+                                            Padding="0" Click="MiniPlayPause_Click" ToolTip="Toggle Wallpaper Playback">
+                                        <TextBlock x:Name="MiniPlayPauseIcon" Text="⏸" FontSize="10" />
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!-- Main Dynamic Content Stage -->
+                    <Border Grid.Column="1" Background="{StaticResource CanvasBaseBrush}"
+                            BorderBrush="{StaticResource HairlineBorderBrush}"
+                            BorderThickness="0,1,0,0">
+                        <Grid>
+
+                            <!-- ============================================= -->
+                            <!-- VIEW 1: EXPLORE (HERO GALLERY)                -->
+                            <!-- ============================================= -->
+                            <ScrollViewer x:Name="ExploreView" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <StackPanel Margin="30,24,30,40">
+
+                                    <!-- Featured Cinematic Hero Banner -->
+                                    <Border x:Name="HeroCard" Height="230" CornerRadius="16" ClipToBounds="True"
+                                            BorderBrush="{StaticResource HairlineBorderBrush}" BorderThickness="1" Margin="0,0,0,18">
+                                        <Grid>
+                                            <!-- Hero Wallpaper Image -->
+                                            <Image x:Name="HeroImage" Stretch="UniformToFill" />
+
+                                            <!-- Cinematic Gradient Overlay Scrim -->
+                                            <Border>
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                        <GradientStop Color="#00000000" Offset="0" />
+                                                        <GradientStop Color="#CC08090B" Offset="0.65" />
+                                                        <GradientStop Color="#F008090B" Offset="1" />
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                            </Border>
+
+                                            <!-- Hero Content Overlay -->
+                                            <Grid VerticalAlignment="Bottom" Margin="24,0,24,20">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Bottom">
+                                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                        <Border Background="#3300E5FF" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                                                            <TextBlock Text="FEATURED 4K" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" />
+                                                        </Border>
+                                                        <Border Background="#20FFFFFF" CornerRadius="4" Padding="6,2">
+                                                            <TextBlock Text="60 FPS · LIVE" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                        </Border>
+                                                    </StackPanel>
+
+                                                    <TextBlock x:Name="HeroTitle" Text="Soft Panels"
+                                                               FontSize="24" FontWeight="Bold"
+                                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                                               Margin="0,0,0,4" />
+                                                    <TextBlock x:Name="HeroSubtitle" Text="Cinematic ultra-fluid 4K live desktop atmosphere"
+                                                               FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                </StackPanel>
+
+                                                <!-- Hero Action Buttons -->
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                                                    <Button Style="{StaticResource PrimaryPillButton}" Margin="0,0,10,0" Click="HeroPreview_Click">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="▶ " FontSize="10" VerticalAlignment="Center" />
+                                                            <TextBlock Text="Quick Preview" FontSize="12.5" VerticalAlignment="Center" />
+                                                        </StackPanel>
+                                                    </Button>
+                                                    <Button Style="{StaticResource AccentPillButton}" Click="HeroApply_Click">
+                                                        <TextBlock Text="Apply to Desktop" FontSize="12.5" />
+                                                    </Button>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Category Chips Row -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,22">
+                                        <RadioButton Content="⚡ All Wallpapers" Style="{StaticResource FilterChip}" IsChecked="True"
+                                                     Checked="Filter_Checked" Tag="All" GroupName="ExploreFilter"/>
+                                        <RadioButton Content="🌸 Anime" Style="{StaticResource FilterChip}"
+                                                     Checked="Filter_Checked" Tag="Anime" GroupName="ExploreFilter"/>
+                                        <RadioButton Content="🌆 Cyberpunk" Style="{StaticResource FilterChip}"
+                                                     Checked="Filter_Checked" Tag="Cyberpunk" GroupName="ExploreFilter"/>
+                                        <RadioButton Content="🌿 Atmosphere" Style="{StaticResource FilterChip}"
+                                                     Checked="Filter_Checked" Tag="Atmosphere" GroupName="ExploreFilter"/>
+                                        <RadioButton Content="✨ Minimal" Style="{StaticResource FilterChip}"
+                                                     Checked="Filter_Checked" Tag="Minimal" GroupName="ExploreFilter"/>
+                                        <RadioButton Content="🎮 Gaming" Style="{StaticResource FilterChip}"
+                                                     Checked="Filter_Checked" Tag="Gaming" GroupName="ExploreFilter"/>
+                                    </StackPanel>
+
+                                    <!-- Discover Online Section -->
+                                    <Grid Margin="0,0,0,14">
+                                        <TextBlock Text="Discover Online" FontSize="15.5" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                        <Button Style="{StaticResource LinkButton}" Content="Browse all at MoeWalls →"
+                                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                Click="BrowseMoeWalls_Click"/>
+                                    </Grid>
+
+                                    <!-- Online Wallpaper Tiles -->
+                                    <ItemsControl x:Name="OnlineWallpaperGrid" Margin="0,0,0,28">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Width="193" Height="128" Margin="0,0,12,12"
+                                                        CornerRadius="11" ClipToBounds="True" Cursor="Hand"
+                                                        Background="{StaticResource SurfaceLevel2Brush}"
+                                                        BorderBrush="{StaticResource HairlineBorderBrush}"
+                                                        BorderThickness="1">
+                                                    <Grid>
+                                                        <Image Source="{Binding Thumbnail}" Stretch="UniformToFill"/>
+                                                        <!-- Bottom scrim -->
+                                                        <Border VerticalAlignment="Bottom" Height="48">
+                                                            <Border.Background>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                    <GradientStop Color="#0008090B" Offset="0"/>
+                                                                    <GradientStop Color="#F008090B" Offset="1"/>
+                                                                </LinearGradientBrush>
+                                                            </Border.Background>
+                                                            <Grid Margin="10,0,8,6" VerticalAlignment="Bottom">
+                                                                <StackPanel>
+                                                                    <TextBlock Text="{Binding Title}" FontSize="11" FontWeight="SemiBold"
+                                                                               Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                                                    <TextBlock Text="{Binding Category}" FontSize="9.5"
+                                                                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                                                                </StackPanel>
+                                                                <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                                        Padding="7,3" FontSize="9.5"
+                                                                        Tag="{Binding PageUrl}" Click="OnlineTile_Click"
+                                                                        Style="{StaticResource AccentPillButton}">
+                                                                    <TextBlock Text="🌐 Get" FontSize="9.5" FontWeight="SemiBold" Foreground="#0C0D0F"/>
+                                                                </Button>
+                                                            </Grid>
+                                                        </Border>
+                                                        <!-- ONLINE badge -->
+                                                        <Border HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                                Margin="8" Background="#AA000000"
+                                                                CornerRadius="4" Padding="5,2">
+                                                            <TextBlock Text="ONLINE" FontSize="8.5" FontWeight="Bold"
+                                                                       Foreground="{StaticResource AccentGoldBrush}"/>
+                                                        </Border>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <!-- Local Library Section Header -->
+                                    <Grid Margin="0,0,0,16">
+                                        <TextBlock Text="Your Local Library" FontSize="15.5" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                                        <TextBlock x:Name="WallpaperCountLabel" Text="8 wallpapers available" FontSize="12.5"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+
+                                    <!-- Responsive Artwork Card Grid -->
+                                    <ItemsControl x:Name="WallpaperGrid">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <!-- Card Item with Hover Reveal -->
+                                                <Border Width="255" Height="175" Margin="0,0,16,16"
+                                                        Background="{StaticResource SurfaceLevel2Brush}"
+                                                        BorderBrush="{StaticResource HairlineBorderBrush}"
+                                                        BorderThickness="1" CornerRadius="12" ClipToBounds="True"
+                                                        Cursor="Hand">
+                                                    <Border.ContextMenu>
+                                                        <ContextMenu Background="{StaticResource SurfaceLevel2Brush}" Foreground="{StaticResource TextPrimaryBrush}">
+                                                            <MenuItem Header="▶ Apply as Desktop Wallpaper" Click="CardApply_Click" Tag="{Binding FilePath}"/>
+                                                            <MenuItem Header="🔍 Quick Preview" Click="CardInspect_Click" Tag="{Binding FilePath}"/>
+                                                            <Separator Background="{StaticResource HairlineBorderBrush}"/>
+                                                            <MenuItem Header="♡ Toggle Favorite" Click="CardFavorite_Click" Tag="{Binding FilePath}"/>
+                                                            <Separator Background="{StaticResource HairlineBorderBrush}"/>
+                                                            <MenuItem Header="🏷 Change Category">
+                                                                <MenuItem Header="🌸 Anime" Tag="Anime" Click="SetCardCategory_Click"/>
+                                                                <MenuItem Header="🌆 Cyberpunk" Tag="Cyberpunk" Click="SetCardCategory_Click"/>
+                                                                <MenuItem Header="🌿 Atmosphere" Tag="Atmosphere" Click="SetCardCategory_Click"/>
+                                                                <MenuItem Header="✨ Minimal" Tag="Minimal" Click="SetCardCategory_Click"/>
+                                                                <MenuItem Header="🎮 Gaming" Tag="Gaming" Click="SetCardCategory_Click"/>
+                                                            </MenuItem>
+                                                        </ContextMenu>
+                                                    </Border.ContextMenu>
+                                                    <Grid>
+                                                        <!-- Artwork Thumbnail -->
+                                                        <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+
+                                                        <!-- Top Badges Overlay -->
+                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+                                                            <Border Background="#8008090B" CornerRadius="4" Padding="6,2">
+                                                                <TextBlock Text="{Binding Resolution}" FontSize="9.5" FontWeight="Bold" Foreground="#FFFFFF" />
+                                                            </Border>
+                                                        </StackPanel>
+
+                                                        <!-- Subtle Bottom Scrim for Title -->
+                                                        <Border VerticalAlignment="Bottom" Height="54">
+                                                            <Border.Background>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                    <GradientStop Color="#0008090B" Offset="0" />
+                                                                    <GradientStop Color="#E608090B" Offset="1" />
+                                                                </LinearGradientBrush>
+                                                            </Border.Background>
+                                                            <Grid Margin="12,0,12,8" VerticalAlignment="Bottom">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <StackPanel Grid.Column="0">
+                                                                    <TextBlock Text="{Binding Title}" FontSize="12.5" FontWeight="SemiBold"
+                                                                               Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                                    <TextBlock Text="{Binding Category}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                                </StackPanel>
+                                                                <Button Grid.Column="1" Background="Transparent" BorderThickness="0"
+                                                                        Padding="6,4" Tag="{Binding FilePath}" Click="CardFavorite_Click"
+                                                                        ToolTip="{Binding FavoriteToolTip}" Cursor="Hand">
+                                                                    <TextBlock Text="{Binding FavoriteIcon}" FontSize="16"
+                                                                               Foreground="{Binding FavoriteBrush}"
+                                                                               Opacity="{Binding FavoriteOpacity}" />
+                                                                </Button>
+                                                            </Grid>
+                                                        </Border>
+
+                                                        <!-- Full Card Hover Overlay with Frosted Pill -->
+                                                        <Border x:Name="HoverOverlay" Background="#9908090B" Opacity="0">
+                                                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                <Button Style="{StaticResource AccentPillButton}"
+                                                                        Content="▶ Apply Now"
+                                                                        Tag="{Binding FilePath}"
+                                                                        Click="CardApply_Click"
+                                                                        Margin="0,0,0,8" />
+                                                                <Button Style="{StaticResource PrimaryPillButton}"
+                                                                        Content="Inspect Details"
+                                                                        Tag="{Binding FilePath}"
+                                                                        Click="CardInspect_Click" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Grid>
+                                                    <Border.Triggers>
+                                                        <EventTrigger RoutedEvent="MouseEnter">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="HoverOverlay"
+                                                                                     Storyboard.TargetProperty="Opacity"
+                                                                                     To="1" Duration="0:0:0.18" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+                                                        <EventTrigger RoutedEvent="MouseLeave">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="HoverOverlay"
+                                                                                     Storyboard.TargetProperty="Opacity"
+                                                                                     To="0" Duration="0:0:0.18" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+                                                    </Border.Triggers>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <!-- ============================================= -->
+                            <!-- VIEW 2: LIBRARY (LOCAL VAULT)                 -->
+                            <!-- ============================================= -->
+                            <ScrollViewer x:Name="LibraryView" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="30,24,30,40">
+                                    <Grid Margin="0,0,0,24">
+                                        <StackPanel>
+                                            <TextBlock Text="Your Wallpaper Vault" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                            <TextBlock Text="Manage built-in and imported live video wallpapers" FontSize="13.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                            <Button Style="{StaticResource PrimaryPillButton}" Margin="0,0,10,0" Click="OpenFolder_Click">
+                                                <TextBlock Text="📁 Open Folder" />
+                                            </Button>
+                                            <Button Style="{StaticResource AccentPillButton}" Click="ImportWallpaper_Click">
+                                                <TextBlock Text="+ Add Wallpaper" />
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Drag and Drop Dropzone -->
+                                    <Border Height="100" BorderBrush="{StaticResource HairlineBorderHoverBrush}"
+                                            BorderThickness="1.5" CornerRadius="12" Margin="0,0,0,24"
+                                            Background="{StaticResource SurfaceLevel2Brush}"
+                                            AllowDrop="True" Drop="DropZone_Drop">
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="📥 Drop .mp4 or .webm files here to import instantly"
+                                                       FontSize="13.5" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                                            <TextBlock Text="Hardware-accelerated Direct3D11 decoding will be configured automatically"
+                                                       FontSize="12" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <ItemsControl x:Name="LibraryGrid">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <!-- Reusing sleek card template -->
+                                                <Border Width="255" Height="175" Margin="0,0,16,16"
+                                                        Background="{StaticResource SurfaceLevel2Brush}"
+                                                        BorderBrush="{StaticResource HairlineBorderBrush}"
+                                                        BorderThickness="1" CornerRadius="12" ClipToBounds="True">
+                                                    <Grid>
+                                                        <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+                                                        <Border VerticalAlignment="Bottom" Height="50" Background="#E608090B">
+                                                            <Grid Margin="12,0,12,0" VerticalAlignment="Center">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <StackPanel Grid.Column="0">
+                                                                    <TextBlock Text="{Binding Title}" FontSize="12.5" FontWeight="SemiBold"
+                                                                               Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                                    <TextBlock Text="{Binding FileSizeFormatted}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                                </StackPanel>
+                                                                <Button Grid.Column="1" Style="{StaticResource AccentPillButton}"
+                                                                        Padding="12,5" Content="Apply" Tag="{Binding FilePath}"
+                                                                        Click="CardApply_Click" />
+                                                            </Grid>
+                                                        </Border>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <!-- ============================================= -->
+                            <!-- VIEW 3: FAVORITES                             -->
+                            <!-- ============================================= -->
+                            <ScrollViewer x:Name="FavoritesView" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="30,24,30,40">
+                                    <Grid Margin="0,0,0,24">
+                                        <StackPanel>
+                                            <TextBlock Text="Your Favorite Wallpapers" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                            <TextBlock Text="Instant access to your handpicked live wallpapers" FontSize="13.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                                        </StackPanel>
+                                        <TextBlock x:Name="FavoritesCountLabel" Text="0 favorites saved" FontSize="12.5"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+
+                                    <!-- Empty State (Shown when no favorites) -->
+                                    <Border x:Name="FavoritesEmptyState" Visibility="Collapsed" Height="260"
+                                            Background="{StaticResource SurfaceLevel2Brush}"
+                                            BorderBrush="{StaticResource HairlineBorderBrush}"
+                                            BorderThickness="1" CornerRadius="14" Margin="0,10,0,0">
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="♡" FontSize="44" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,0,0,12" />
+                                            <TextBlock Text="Your favorites collection is empty" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                                            <TextBlock Text="Click the heart icon on any wallpaper card to save it here for instant access."
+                                                       FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,6,0,18" />
+                                            <Button Style="{StaticResource AccentPillButton}" Content="Explore Wallpapers" HorizontalAlignment="Center" Click="GoToExplore_Click" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Favorites Grid -->
+                                    <ItemsControl x:Name="FavoritesGrid">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Width="255" Height="175" Margin="0,0,16,16"
+                                                        Background="{StaticResource SurfaceLevel2Brush}"
+                                                        BorderBrush="{StaticResource HairlineBorderBrush}"
+                                                        BorderThickness="1" CornerRadius="12" ClipToBounds="True"
+                                                        Cursor="Hand">
+                                                    <Grid>
+                                                        <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+                                                            <Border Background="#8008090B" CornerRadius="4" Padding="6,2">
+                                                                <TextBlock Text="{Binding Resolution}" FontSize="9.5" FontWeight="Bold" Foreground="#FFFFFF" />
+                                                            </Border>
+                                                        </StackPanel>
+                                                        <Border VerticalAlignment="Bottom" Height="54">
+                                                            <Border.Background>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                    <GradientStop Color="#0008090B" Offset="0" />
+                                                                    <GradientStop Color="#E608090B" Offset="1" />
+                                                                </LinearGradientBrush>
+                                                            </Border.Background>
+                                                            <Grid Margin="12,0,12,8" VerticalAlignment="Bottom">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <StackPanel Grid.Column="0">
+                                                                    <TextBlock Text="{Binding Title}" FontSize="12.5" FontWeight="SemiBold"
+                                                                               Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                                    <TextBlock Text="{Binding Category}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                                </StackPanel>
+                                                                <Button Grid.Column="1" Background="Transparent" BorderThickness="0"
+                                                                        Padding="6,4" Tag="{Binding FilePath}" Click="CardFavorite_Click"
+                                                                        ToolTip="{Binding FavoriteToolTip}" Cursor="Hand">
+                                                                    <TextBlock Text="{Binding FavoriteIcon}" FontSize="16"
+                                                                               Foreground="{Binding FavoriteBrush}"
+                                                                               Opacity="{Binding FavoriteOpacity}" />
+                                                                </Button>
+                                                            </Grid>
+                                                        </Border>
+                                                        <!-- Card Hover Overlay -->
+                                                        <Border x:Name="FavHoverOverlay" Background="#9908090B" Opacity="0">
+                                                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                <Button Style="{StaticResource AccentPillButton}"
+                                                                        Content="▶ Apply Now"
+                                                                        Tag="{Binding FilePath}"
+                                                                        Click="CardApply_Click"
+                                                                        Margin="0,0,0,8" />
+                                                                <Button Style="{StaticResource PrimaryPillButton}"
+                                                                        Content="Inspect Details"
+                                                                        Tag="{Binding FilePath}"
+                                                                        Click="CardInspect_Click" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Grid>
+                                                    <Border.Triggers>
+                                                        <EventTrigger RoutedEvent="MouseEnter">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="FavHoverOverlay"
+                                                                                     Storyboard.TargetProperty="Opacity"
+                                                                                     To="1" Duration="0:0:0.18" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+                                                        <EventTrigger RoutedEvent="MouseLeave">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="FavHoverOverlay"
+                                                                                     Storyboard.TargetProperty="Opacity"
+                                                                                     To="0" Duration="0:0:0.18" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+                                                    </Border.Triggers>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <!-- ============================================= -->
+                            <!-- VIEW 4: ATMOSPHERES (CHRONO-PLAYLISTS)         -->
+                            <!-- ============================================= -->
+                            <ScrollViewer x:Name="AtmospheresView" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="30,24,30,40">
+                                    <TextBlock Text="Atmospheres &amp; Schedules" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                    <TextBlock Text="Set dynamic mood rotations synchronized with your day" FontSize="13.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,24" />
+
+                                    <!-- 3 Atmosphere Mood Cards -->
+                                    <Grid Margin="0,0,0,20">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="18" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="18" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Morning Atmosphere Card -->
+                                        <Border Grid.Column="0" Height="260" Background="{StaticResource SurfaceLevel2Brush}"
+                                                BorderBrush="{StaticResource HairlineBorderBrush}" BorderThickness="1" CornerRadius="14" Padding="20">
+                                            <Grid>
+                                                <StackPanel>
+                                                    <Border Width="40" Height="40" Background="#26F59E0B" CornerRadius="8" HorizontalAlignment="Left" Margin="0,0,0,14">
+                                                        <TextBlock Text="🌅" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <TextBlock Text="Sunrise Horizon" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                    <TextBlock Text="Vibrant nature and warm morning aesthetics to start your workday."
+                                                               FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                                                </StackPanel>
+                                                <Button VerticalAlignment="Bottom" Style="{StaticResource PrimaryPillButton}" Content="▶ Activate" Padding="12,7" Click="ActivateAtmosphere_Click" Tag="Sunrise" />
+                                            </Grid>
+                                        </Border>
+
+                                        <!-- Studio / Focus Card -->
+                                        <Border Grid.Column="2" Height="260" Background="{StaticResource SurfaceLevel2Brush}"
+                                                BorderBrush="{StaticResource HairlineBorderBrush}" BorderThickness="1" CornerRadius="14" Padding="20">
+                                            <Grid>
+                                                <StackPanel>
+                                                    <Border Width="40" Height="40" Background="#2600E5FF" CornerRadius="8" HorizontalAlignment="Left" Margin="0,0,0,14">
+                                                        <TextBlock Text="💻" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <TextBlock Text="Deep Focus Studio" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                    <TextBlock Text="Calm, non-distracting ambient loops optimized for coding and intense focus."
+                                                               FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                                                </StackPanel>
+                                                <Button VerticalAlignment="Bottom" Style="{StaticResource PrimaryPillButton}" Content="▶ Activate" Padding="12,7" Click="ActivateAtmosphere_Click" Tag="Focus" />
+                                            </Grid>
+                                        </Border>
+
+                                        <!-- Midnight AMOLED Card -->
+                                        <Border Grid.Column="4" Height="260" Background="{StaticResource SurfaceLevel2Brush}"
+                                                BorderBrush="{StaticResource HairlineBorderBrush}" BorderThickness="1" CornerRadius="14" Padding="20">
+                                            <Grid>
+                                                <StackPanel>
+                                                    <Border Width="40" Height="40" Background="#268B5CF6" CornerRadius="8" HorizontalAlignment="Left" Margin="0,0,0,14">
+                                                        <TextBlock Text="🌙" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <TextBlock Text="Midnight Obsidian" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                    <TextBlock Text="Zero glare, deep cosmic blacks and AMOLED nightscapes for evening sessions."
+                                                               FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                                                </StackPanel>
+                                                <Button VerticalAlignment="Bottom" Style="{StaticResource PrimaryPillButton}" Content="▶ Activate" Padding="12,7" Click="ActivateAtmosphere_Click" Tag="Midnight" />
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Playlist Settings -->
+                                    <Border Background="{StaticResource SurfaceLevel2Brush}"
+                                            BorderBrush="{StaticResource HairlineBorderBrush}"
+                                            BorderThickness="1" CornerRadius="12" Padding="20">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="Automatic Playlist Rotation Interval" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                <TextBlock Text="Smoothly crossfades to the next wallpaper in the active atmosphere" FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                                            </StackPanel>
+                                            <ComboBox Grid.Column="1" Width="160" Height="32" SelectedIndex="1"
+                                                      Background="{StaticResource SurfaceLevel3Brush}" Foreground="{StaticResource TextPrimaryBrush}">
+                                                <ComboBoxItem Content="Every 15 Minutes" />
+                                                <ComboBoxItem Content="Every 30 Minutes" />
+                                                <ComboBoxItem Content="Every 1 Hour" />
+                                                <ComboBoxItem Content="Every Day (Chrono)" />
+                                            </ComboBox>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <!-- ============================================= -->
+                            <!-- VIEW 5: DISPLAYS (PHYSICAL TOPOLOGY RIG)      -->
+                            <!-- ============================================= -->
+                            <ScrollViewer x:Name="DisplaysView" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="30,24,30,40">
+                                    <TextBlock Text="Physical Displays &amp; Topology" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                    <TextBlock Text="Hardware topology detected from your multi-monitor setup" FontSize="13.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,24" />
+
+                                    <!-- Interactive 2.5D Monitor Rig Preview -->
+                                    <Border Height="320" Background="{StaticResource SurfaceLevel2Brush}"
+                                            BorderBrush="{StaticResource HairlineBorderBrush}"
+                                            BorderThickness="1" CornerRadius="16" Padding="30">
+                                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+
+                                                <!-- Monitor 1 Stand & Frame -->
+                                                <StackPanel Margin="0,0,30,0">
+                                                    <Border Width="380" Height="220" Background="#000000"
+                                                            BorderBrush="#33FFFFFF" BorderThickness="4" CornerRadius="8" ClipToBounds="True">
+                                                        <Grid>
+                                                            <Image x:Name="Display1ScreenImage" Stretch="UniformToFill" />
+                                                            <Border Background="#66000000" VerticalAlignment="Top" Padding="8,4">
+                                                                <TextBlock x:Name="Display1ResolutionLabel" Text="DISPLAY 1 · 2560 × 1440 · Primary" FontSize="11" FontWeight="SemiBold" Foreground="#FFFFFF" />
+                                                            </Border>
+                                                        </Grid>
+                                                    </Border>
+                                                    <!-- Monitor Stand Foot -->
+                                                    <Border Width="16" Height="30" Background="#262A36" HorizontalAlignment="Center" />
+                                                    <Border Width="120" Height="8" Background="#333847" CornerRadius="4" HorizontalAlignment="Center" />
+                                                </StackPanel>
+
+                                                <!-- Monitor 2 Stand & Frame (Virtual Secondary) -->
+                                                <StackPanel>
+                                                    <Border Width="300" Height="180" Background="#000000"
+                                                            BorderBrush="#33FFFFFF" BorderThickness="4" CornerRadius="8" ClipToBounds="True" Margin="0,40,0,0">
+                                                        <Grid>
+                                                            <Image x:Name="Display2ScreenImage" Stretch="UniformToFill" />
+                                                            <Border Background="#66000000" VerticalAlignment="Top" Padding="8,4">
+                                                                <TextBlock Text="DISPLAY 2 · 1920 × 1080" FontSize="11" FontWeight="SemiBold" Foreground="#FFFFFF" />
+                                                            </Border>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border Width="14" Height="30" Background="#262A36" HorizontalAlignment="Center" />
+                                                    <Border Width="100" Height="8" Background="#333847" CornerRadius="4" HorizontalAlignment="Center" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Display Mode Actions -->
+                                    <Grid Margin="0,20,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="Display Projection Mode" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                            <TextBlock Text="Choose how wallpapers scale across your monitors" FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <RadioButton Content="Span Ultrawide" Style="{StaticResource FilterChip}" IsChecked="True" />
+                                            <RadioButton Content="Synchronized Duplicate" Style="{StaticResource FilterChip}" />
+                                            <RadioButton Content="Independent Per Display" Style="{StaticResource FilterChip}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <!-- ============================================= -->
+                            <!-- VIEW 6: PERFORMANCE & ENGINE SHIELD           -->
+                            <!-- ============================================= -->
+                            <ScrollViewer x:Name="PerformanceView" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="30,24,30,40">
+                                    <TextBlock Text="Engine Shield &amp; Telemetry" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                    <TextBlock Text="Live real-time performance and battery preservation settings" FontSize="13.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,24" />
+
+                                    <!-- Telemetry Counters -->
+                                    <Grid Margin="0,0,0,24">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="16" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="16" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Memory Card -->
+                                        <Border Grid.Column="0" Background="{StaticResource SurfaceLevel2Brush}"
+                                                BorderBrush="{StaticResource HairlineBorderBrush}" BorderThickness="1" CornerRadius="12" Padding="20">
+                                            <StackPanel>
+                                                <TextBlock Text="RAM Footprint" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                <TextBlock x:Name="TelemetryRamValue" Text="82.4 MB" FontSize="26" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Margin="0,6,0,2" />
+                                                <TextBlock Text="Zero-leak memory model" FontSize="11" Foreground="{StaticResource TextMutedBrush}" />
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- GPU Card -->
+                                        <Border Grid.Column="2" Background="{StaticResource SurfaceLevel2Brush}"
+                                                BorderBrush="{StaticResource HairlineBorderBrush}" BorderThickness="1" CornerRadius="12" Padding="20">
+                                            <StackPanel>
+                                                <TextBlock Text="Direct3D11 GPU Load" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                <TextBlock x:Name="TelemetryGpuValue" Text="1.8 %" FontSize="26" FontWeight="Bold" Foreground="{StaticResource AccentEmeraldBrush}" Margin="0,6,0,2" />
+                                                <TextBlock x:Name="TelemetryGpuDetail" Text="Hardware zero-copy decode" FontSize="11" Foreground="{StaticResource TextMutedBrush}" />
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- FPS Card -->
+                                        <Border Grid.Column="4" Background="{StaticResource SurfaceLevel2Brush}"
+                                                BorderBrush="{StaticResource HairlineBorderBrush}" BorderThickness="1" CornerRadius="12" Padding="20">
+                                            <StackPanel>
+                                                <TextBlock Text="Rendering Fluidity" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                <TextBlock x:Name="TelemetryFpsValue" Text="60 FPS" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,6,0,2" />
+                                                <TextBlock x:Name="TelemetryFpsDetail" Text="Smooth hardware cadence" FontSize="11" Foreground="{StaticResource TextMutedBrush}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Policy Toggles -->
+                                    <Border Background="{StaticResource SurfaceLevel2Brush}"
+                                            BorderBrush="{StaticResource HairlineBorderBrush}"
+                                            BorderThickness="1" CornerRadius="12" Padding="22">
+                                        <StackPanel>
+                                            <TextBlock Text="Smart Power Management" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16" />
+
+                                            <CheckBox x:Name="AutoPauseFullscreenCheck" IsChecked="True"
+                                                      Checked="EngineShieldCheck_Changed" Unchecked="EngineShieldCheck_Changed"
+                                                      Margin="0,0,0,14">
+                                                <StackPanel>
+                                                    <TextBlock Text="Auto-Pause during Fullscreen Games or Applications" FontWeight="Medium" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                    <TextBlock Text="Suspends video decoding instantly when a game or full window has focus (0% GPU)" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                </StackPanel>
+                                            </CheckBox>
+
+                                            <CheckBox x:Name="BatterySaverCheck" IsChecked="True"
+                                                      Checked="EngineShieldCheck_Changed" Unchecked="EngineShieldCheck_Changed"
+                                                      Margin="0,0,0,14">
+                                                <StackPanel>
+                                                    <TextBlock Text="Battery Saver Mode" FontWeight="Medium" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                    <TextBlock Text="Limits framerate to 30 FPS or pauses playback when running on laptop battery" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                </StackPanel>
+                                            </CheckBox>
+
+                                            <CheckBox x:Name="SleepStandbyCheck" IsChecked="True"
+                                                      Checked="EngineShieldCheck_Changed" Unchecked="EngineShieldCheck_Changed">
+                                                <StackPanel>
+                                                    <TextBlock Text="Sleep &amp; Display Off Standby" FontWeight="Medium" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                    <TextBlock Text="Completely halts the playback engine when monitors enter low-power sleep" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                </StackPanel>
+                                            </CheckBox>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <!-- ============================================= -->
+                            <!-- VIEW 7: SETTINGS                              -->
+                            <!-- ============================================= -->
+                            <ScrollViewer x:Name="SettingsView" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="30,24,30,40">
+                                    <TextBlock Text="Application Settings" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                    <TextBlock Text="Configure launch behavior and system integration" FontSize="13.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,24" />
+
+                                    <Border Background="{StaticResource SurfaceLevel2Brush}"
+                                            BorderBrush="{StaticResource HairlineBorderBrush}"
+                                            BorderThickness="1" CornerRadius="12" Padding="22" Margin="0,0,0,18">
+                                        <StackPanel>
+                                            <TextBlock Text="System Integration" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16" />
+
+                                            <CheckBox x:Name="LaunchAtStartupCheck" IsChecked="True" Checked="StartupCheck_Changed" Unchecked="StartupCheck_Changed" Margin="0,0,0,14">
+                                                <StackPanel>
+                                                    <TextBlock Text="Launch WALL Z at Windows Startup" FontWeight="Medium" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                    <TextBlock Text="Automatically loads your preferred desktop wallpaper when Windows boots" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                </StackPanel>
+                                            </CheckBox>
+
+                                            <CheckBox IsChecked="True" Margin="0,0,0,14">
+                                                <StackPanel>
+                                                    <TextBlock Text="Start Minimized to System Tray" FontWeight="Medium" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                    <TextBlock Text="Keeps the app quiet in your notification area without popping up the main window" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                </StackPanel>
+                                            </CheckBox>
+
+                                            <CheckBox IsChecked="True">
+                                                <StackPanel>
+                                                    <TextBlock Text="Dynamic Ambient Lighting" FontWeight="Medium" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                    <TextBlock Text="Dynamically adapts interface glow to match the color palette of active wallpapers" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                </StackPanel>
+                                            </CheckBox>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Background="{StaticResource SurfaceLevel2Brush}"
+                                            BorderBrush="{StaticResource HairlineBorderBrush}"
+                                            BorderThickness="1" CornerRadius="12" Padding="22">
+                                        <StackPanel>
+                                            <TextBlock Text="About WALL Z" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                            <TextBlock Text="Version 2.0 (High-Performance WorkerW Engine) · Crafted by Areeb Siddiqui" FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,14" />
+                                            <TextBlock Text="Built with C# .NET 8, LibVLC Direct3D11 zero-copy hardware acceleration, and Windows 11 Fluent design principles."
+                                                       FontSize="12" Foreground="{StaticResource TextMutedBrush}" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </ScrollViewer>
+
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

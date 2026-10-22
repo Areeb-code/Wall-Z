@@ -1,0 +1,472 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ================================================================= -->
+    <!-- WALL Z — 2026 LUXURY DESIGN SYSTEM                                -->
+    <!-- Obsidian dark surfaces · Liquid Glass buttons · Gold accent haze  -->
+    <!-- ================================================================= -->
+
+    <!-- Base Canvas & Elevated Surfaces -->
+    <Color x:Key="CanvasBaseColor">#08090B</Color>
+    <Color x:Key="SurfaceLevel1Color">#0E1015</Color>
+    <Color x:Key="SurfaceLevel2Color">#14171F</Color>
+    <Color x:Key="SurfaceLevel3Color">#1B1F2A</Color>
+    <Color x:Key="SurfaceHoverColor">#222736</Color>
+
+    <SolidColorBrush x:Key="CanvasBaseBrush"    Color="{StaticResource CanvasBaseColor}" />
+    <SolidColorBrush x:Key="SurfaceLevel1Brush" Color="{StaticResource SurfaceLevel1Color}" />
+    <SolidColorBrush x:Key="SurfaceLevel2Brush" Color="{StaticResource SurfaceLevel2Color}" />
+    <SolidColorBrush x:Key="SurfaceLevel3Brush" Color="{StaticResource SurfaceLevel3Color}" />
+    <SolidColorBrush x:Key="SurfaceHoverBrush"  Color="{StaticResource SurfaceHoverColor}" />
+
+    <!-- Hairline Separators & Micro-borders -->
+    <SolidColorBrush x:Key="HairlineBorderBrush"         Color="#16FFFFFF" />
+    <SolidColorBrush x:Key="HairlineBorderHoverBrush"    Color="#2AFFFFFF" />
+    <SolidColorBrush x:Key="HairlineBorderSelectedBrush" Color="#44FFFFFF" />
+
+    <!-- Typography Brushes -->
+    <SolidColorBrush x:Key="TextPrimaryBrush"   Color="#F8F9FA" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#A0A5B1" />
+    <SolidColorBrush x:Key="TextMutedBrush"     Color="#5F6573" />
+    <SolidColorBrush x:Key="TextDisabledBrush"  Color="#3E434F" />
+
+    <!-- ================================================================= -->
+    <!-- ACCENT COLORS                                                       -->
+    <!-- Primary: Warm Gold (luxury) · Secondary: Cyan (status/indicators) -->
+    <!-- ================================================================= -->
+
+    <!-- Gold — Primary Luxury Accent -->
+    <Color x:Key="AccentGoldColor">#C9993A</Color>
+    <Color x:Key="AccentGoldBrightColor">#E8B84B</Color>
+    <Color x:Key="AccentGoldDimColor">#7A5B1A</Color>
+    <SolidColorBrush x:Key="AccentGoldBrush"       Color="{StaticResource AccentGoldColor}" />
+    <SolidColorBrush x:Key="AccentGoldBrightBrush" Color="{StaticResource AccentGoldBrightColor}" />
+    <SolidColorBrush x:Key="AccentGoldDimBrush"    Color="{StaticResource AccentGoldDimColor}" />
+
+    <!-- Cyan — Secondary (kept for status indicators & live badges) -->
+    <Color x:Key="AccentCyanColor">#00E5FF</Color>
+    <Color x:Key="AccentPurpleColor">#8B5CF6</Color>
+    <Color x:Key="AccentEmeraldColor">#10B981</Color>
+    <Color x:Key="AccentAmberColor">#F59E0B</Color>
+
+    <SolidColorBrush x:Key="AccentCyanBrush"    Color="{StaticResource AccentCyanColor}" />
+    <SolidColorBrush x:Key="AccentPurpleBrush"  Color="{StaticResource AccentPurpleColor}" />
+    <SolidColorBrush x:Key="AccentEmeraldBrush" Color="{StaticResource AccentEmeraldColor}" />
+    <SolidColorBrush x:Key="AccentAmberBrush"   Color="{StaticResource AccentAmberColor}" />
+
+    <!-- ================================================================= -->
+    <!-- SPECULAR / GLARE BRUSHES (2026 Liquid Glass)                       -->
+    <!-- Top-edge highlight that simulates light reflecting off the surface  -->
+    <!-- ================================================================= -->
+    <LinearGradientBrush x:Key="ButtonTopGlareBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#28FFFFFF" Offset="0" />
+        <GradientStop Color="#00FFFFFF" Offset="0.65" />
+    </LinearGradientBrush>
+
+    <!-- Font Families -->
+    <FontFamily x:Key="DefaultFontFamily">Segoe UI Variable Display, Segoe UI Variable Text, Segoe UI, sans-serif</FontFamily>
+    <FontFamily x:Key="LuxuryFontFamily">Palatino Linotype, Georgia, Times New Roman, serif</FontFamily>
+
+    <!-- ================================================================= -->
+    <!-- MINIMALIST SCROLLBAR (4px zero-bloat track)                        -->
+    <!-- ================================================================= -->
+    <Style x:Key="ScrollThumb" TargetType="{x:Type Thumb}">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable"  Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <Border CornerRadius="3" Background="#35FFFFFF" Margin="1,0,1,0" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type ScrollBar}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Width"      Value="6" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                    <Grid Background="Transparent">
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource ScrollThumb}" />
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================================================================= -->
+    <!-- PRIMARY PILL BUTTON — Frosted glass + top specular glare stripe    -->
+    <!-- ================================================================= -->
+    <Style x:Key="PrimaryPillButton" TargetType="Button">
+        <Setter Property="FontFamily"       Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize"         Value="13" />
+        <Setter Property="FontWeight"       Value="SemiBold" />
+        <Setter Property="Foreground"       Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="Background"       Value="#2AFFFFFF" />
+        <Setter Property="BorderBrush"      Value="{StaticResource HairlineBorderHoverBrush}" />
+        <Setter Property="BorderThickness"  Value="1" />
+        <Setter Property="Padding"          Value="18,8" />
+        <Setter Property="Cursor"           Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <!-- Main button surface -->
+                        <Border x:Name="RootBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <!-- Specular top-edge glare stripe (2026 signature) -->
+                        <Border x:Name="GlareStripe" CornerRadius="10,10,0,0" Height="10"
+                                VerticalAlignment="Top" IsHitTestVisible="False"
+                                Background="{StaticResource ButtonTopGlareBrush}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="RootBorder" Property="Background"    Value="#40FFFFFF" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush"   Value="#60FFFFFF" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="RootBorder"  Property="Background"   Value="#20FFFFFF" />
+                            <Setter TargetName="RootBorder"  Property="BorderBrush"  Value="#30FFFFFF" />
+                            <Setter TargetName="GlareStripe" Property="Opacity"      Value="0.35" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================================================================= -->
+    <!-- ACCENT PILL BUTTON — Gold luxury · glow halo · specular glare      -->
+    <!-- ================================================================= -->
+    <Style x:Key="AccentPillButton" TargetType="Button">
+        <Setter Property="FontFamily"       Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize"         Value="13" />
+        <Setter Property="FontWeight"       Value="SemiBold" />
+        <Setter Property="Foreground"       Value="#0C0D0F" />
+        <Setter Property="Background"       Value="{StaticResource AccentGoldBrush}" />
+        <Setter Property="BorderThickness"  Value="0" />
+        <Setter Property="Padding"          Value="20,9" />
+        <Setter Property="Cursor"           Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <!-- Soft glow halo behind button (blurred same-color blob) -->
+                        <Border x:Name="GlowBlob" CornerRadius="12"
+                                Margin="0,3,0,-3" Opacity="0.5">
+                            <Border.Background>
+                                <SolidColorBrush Color="{StaticResource AccentGoldDimColor}" />
+                            </Border.Background>
+                            <Border.Effect>
+                                <BlurEffect Radius="14" RenderingBias="Performance" />
+                            </Border.Effect>
+                        </Border>
+                        <!-- Main gold button surface -->
+                        <Border x:Name="RootBorder" CornerRadius="10"
+                                Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}">
+                            <Grid>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <!-- Specular glare stripe -->
+                                <Border CornerRadius="10,10,0,0" Height="11" VerticalAlignment="Top"
+                                        IsHitTestVisible="False">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#24FFFFFF" Offset="0" />
+                                            <GradientStop Color="#00FFFFFF" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="GlowBlob"   Property="Opacity"    Value="0.85" />
+                            <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource AccentGoldBrightBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="GlowBlob"   Property="Opacity"    Value="0.2" />
+                            <Setter TargetName="RootBorder" Property="Background" Value="#9A6818" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================================================================= -->
+    <!-- SECONDARY PILL BUTTON — Dark surface, hairline border              -->
+    <!-- ================================================================= -->
+    <Style x:Key="SecondaryPillButton" TargetType="Button">
+        <Setter Property="FontFamily"       Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize"         Value="13" />
+        <Setter Property="FontWeight"       Value="Medium" />
+        <Setter Property="Foreground"       Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Background"       Value="{StaticResource SurfaceLevel2Brush}" />
+        <Setter Property="BorderBrush"      Value="{StaticResource HairlineBorderBrush}" />
+        <Setter Property="BorderThickness"  Value="1" />
+        <Setter Property="Padding"          Value="16,8" />
+        <Setter Property="Cursor"           Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="RootBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="10"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="RootBorder" Property="Background"  Value="{StaticResource SurfaceLevel3Brush}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{StaticResource HairlineBorderHoverBrush}" />
+                            <Setter Property="Foreground"   Value="{StaticResource TextPrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource SurfaceLevel1Brush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================================================================= -->
+    <!-- LINK BUTTON — inline text link with gold color + underline on hover -->
+    <!-- ================================================================= -->
+    <Style x:Key="LinkButton" TargetType="Button">
+        <Setter Property="FontFamily"       Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize"         Value="12.5" />
+        <Setter Property="Foreground"       Value="{StaticResource AccentGoldBrush}" />
+        <Setter Property="Background"       Value="Transparent" />
+        <Setter Property="BorderThickness"  Value="0" />
+        <Setter Property="Cursor"           Value="Hand" />
+        <Setter Property="Padding"          Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <TextBlock x:Name="Txt"
+                               Text="{TemplateBinding Content}"
+                               Foreground="{TemplateBinding Foreground}"
+                               FontSize="{TemplateBinding FontSize}" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Txt" Property="TextDecorations" Value="Underline" />
+                            <Setter Property="Foreground" Value="{StaticResource AccentGoldBrightBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================================================================= -->
+    <!-- WINDOW CHROME BUTTONS (Min · Max · Close)                          -->
+    <!-- ================================================================= -->
+    <Style x:Key="ChromeButton" TargetType="Button">
+        <Setter Property="Width"            Value="46" />
+        <Setter Property="Height"           Value="32" />
+        <Setter Property="Background"       Value="Transparent" />
+        <Setter Property="BorderThickness"  Value="0" />
+        <Setter Property="Foreground"       Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#1AFFFFFF" />
+                            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#2EFFFFFF" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ChromeCloseButton" TargetType="Button" BasedOn="{StaticResource ChromeButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#E81123" />
+                            <Setter Property="Foreground" Value="#FFFFFF" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#C40F1D" />
+                            <Setter Property="Foreground" Value="#FFFFFF" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================================================================= -->
+    <!-- SIDEBAR NAV RADIO BUTTON — gold pill indicator + ambient glow      -->
+    <!-- ================================================================= -->
+    <Style x:Key="NavRadioButton" TargetType="RadioButton">
+        <Setter Property="FontFamily"   Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize"     Value="13.5" />
+        <Setter Property="FontWeight"   Value="Normal" />
+        <Setter Property="Foreground"   Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Background"   Value="Transparent" />
+        <Setter Property="Height"       Value="42" />
+        <Setter Property="Margin"       Value="12,2" />
+        <Setter Property="Cursor"       Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="NavBorder"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="8" Padding="14,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Active gold indicator pill -->
+                            <Border x:Name="ActivePill"
+                                    Grid.Column="0"
+                                    Width="3.5" Height="18" CornerRadius="2"
+                                    Background="{StaticResource AccentGoldBrush}"
+                                    HorizontalAlignment="Left"
+                                    Margin="-6,0,10,0"
+                                    Opacity="0">
+                                <Border.Effect>
+                                    <BlurEffect Radius="4" RenderingBias="Performance" />
+                                </Border.Effect>
+                            </Border>
+
+                            <ContentPresenter Grid.Column="1"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="NavBorder" Property="Background" Value="#0DFFFFFF" />
+                            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="NavBorder"  Property="Background" Value="#14FFFFFF" />
+                            <Setter TargetName="ActivePill" Property="Opacity"    Value="1" />
+                            <Setter Property="Foreground"   Value="{StaticResource TextPrimaryBrush}" />
+                            <Setter Property="FontWeight"   Value="SemiBold" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================================================================= -->
+    <!-- FILTER CHIP — Capsule pill with gold glow when selected            -->
+    <!-- ================================================================= -->
+    <Style x:Key="FilterChip" TargetType="RadioButton">
+        <Setter Property="FontFamily"       Value="{StaticResource DefaultFontFamily}" />
+        <Setter Property="FontSize"         Value="12" />
+        <Setter Property="Foreground"       Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Background"       Value="{StaticResource SurfaceLevel2Brush}" />
+        <Setter Property="BorderBrush"      Value="{StaticResource HairlineBorderBrush}" />
+        <Setter Property="BorderThickness"  Value="1" />
+        <Setter Property="Padding"          Value="14,6" />
+        <Setter Property="Margin"           Value="0,0,8,0" />
+        <Setter Property="Cursor"           Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Grid>
+                        <!-- Glow halo for selected state -->
+                        <Border x:Name="ChipGlow" CornerRadius="999"
+                                Margin="0,1,0,-1" Opacity="0">
+                            <Border.Background>
+                                <SolidColorBrush Color="{StaticResource AccentGoldDimColor}" />
+                            </Border.Background>
+                            <Border.Effect>
+                                <BlurEffect Radius="10" RenderingBias="Performance" />
+                            </Border.Effect>
+                        </Border>
+                        <Border x:Name="ChipBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="999"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ChipBorder" Property="Background"   Value="{StaticResource SurfaceLevel3Brush}" />
+                            <Setter Property="Foreground"   Value="{StaticResource TextPrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="ChipBorder" Property="Background"    Value="#1EC9993A" />
+                            <Setter TargetName="ChipBorder" Property="BorderBrush"   Value="{StaticResource AccentGoldBrush}" />
+                            <Setter TargetName="ChipGlow"   Property="Opacity"       Value="0.55" />
+                            <Setter Property="Foreground"   Value="{StaticResource AccentGoldBrightBrush}" />
+                            <Setter Property="FontWeight"   Value="SemiBold" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================================================================= -->
+    <!-- LINK BUTTON — gold text, no chrome, hover underline               -->
+    <!-- ================================================================= -->
+    <Style x:Key="LinkButton" TargetType="Button">
+        <Setter Property="Background"       Value="Transparent" />
+        <Setter Property="BorderThickness"  Value="0" />
+        <Setter Property="Foreground"       Value="{StaticResource AccentGoldBrush}" />
+        <Setter Property="FontSize"         Value="12.5" />
+        <Setter Property="FontWeight"       Value="Normal" />
+        <Setter Property="Cursor"           Value="Hand" />
+        <Setter Property="Padding"          Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <TextBlock x:Name="Txt"
+                               Text="{TemplateBinding Content}"
+                               Foreground="{TemplateBinding Foreground}"
+                               FontSize="{TemplateBinding FontSize}"
+                               FontWeight="{TemplateBinding FontWeight}"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Txt" Property="TextDecorations" Value="Underline"/>
+                            <Setter Property="Foreground" Value="{StaticResource AccentGoldBrightBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
