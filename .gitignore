@@ -1,0 +1,132 @@
+# ==========================================
+# .NET Build Outputs
+# ==========================================
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+[Aa]rtifacts/
+out/
+
+# Build and test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+
+# ==========================================
+# Visual Studio
+# ==========================================
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+*.sln.ide
+
+# Visual Studio profiling
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# ==========================================
+# Visual Studio Code
+# ==========================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/settings.json
+
+# ==========================================
+# .NET / NuGet
+# ==========================================
+*.nupkg
+*.snupkg
+.nuget/
+project.lock.json
+project.fragment.lock.json
+
+# Keep NuGet.Config if it contains no secrets.
+# Never commit credentials or private package tokens.
+
+# ==========================================
+# WPF Generated Files
+# ==========================================
+# Build-generated WPF files are normally inside bin/ or obj/
+# Keep handwritten XAML and code-behind files tracked.
+# Do not ignore *.g.cs globally.
+
+# ==========================================
+# Windows Temporary Files
+# ==========================================
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# ==========================================
+# Logs and Temporary Files
+# ==========================================
+*.log
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+*.swp
+*.swo
+~$*
+
+# ==========================================
+# Environment and Secrets
+# ==========================================
+.env
+.env.*
+!.env.example
+secrets.json
+appsettings.*.local.json
+
+# User-specific certificates and keys
+*.pfx
+*.p12
+*.key
+*.pem
+
+# ==========================================
+# Coverage and Analysis
+# ==========================================
+coverage/
+coverage.*
+*.sarif
+
+# ==========================================
+# OS / File Manager
+# ==========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ==========================================
+# Optional: Local Database Files
+# Uncomment if databases are generated locally
+# ==========================================
+# *.mdf
+# *.ldf
+# *.sqlite
+# *.db
+
+# ==========================================
+# Optional: Publish Output
+# Uncomment if you publish to these folders
+# ==========================================
+# publish/
+# Published/
